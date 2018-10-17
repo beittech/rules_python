@@ -14,24 +14,27 @@
 """Import .whl files into Bazel."""
 
 def _whl_impl(repository_ctx):
-  """Core implementation of whl_library."""
+    """Core implementation of whl_library."""
 
-  args = [
-    "/usr/bin/env", "python3",
-    repository_ctx.path(repository_ctx.attr._script),
-    "--whl", repository_ctx.path(repository_ctx.attr.whl),
-    "--requirements", repository_ctx.attr.requirements,
-  ]
-
-  if repository_ctx.attr.extras:
-    args += [
-      "--extras=%s" % extra
-      for extra in repository_ctx.attr.extras
+    args = [
+        "/usr/bin/env",
+        "python3.7",
+        repository_ctx.path(repository_ctx.attr._script),
+        "--whl",
+        repository_ctx.path(repository_ctx.attr.whl),
+        "--requirements",
+        repository_ctx.attr.requirements,
     ]
 
-  result = repository_ctx.execute(args)
-  if result.return_code:
-    fail("whl_library failed: %s (%s)" % (result.stdout, result.stderr))
+    if repository_ctx.attr.extras:
+        args += [
+            "--extras=%s" % extra
+            for extra in repository_ctx.attr.extras
+        ]
+
+    result = repository_ctx.execute(args)
+    if result.return_code:
+        fail("whl_library failed: %s (%s)" % (result.stdout, result.stderr))
 
 whl_library = repository_rule(
     attrs = {
